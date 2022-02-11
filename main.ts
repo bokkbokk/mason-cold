@@ -21,6 +21,21 @@ namespace SpriteKind {
     export const ballsofenemy = SpriteKind.create()
     export const nothun = SpriteKind.create()
 }
+controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+    badguy()
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Obstacle, function (sprite, otherSprite) {
+    if (randint(0, 10) == 2) {
+        badguy()
+    }
+    cone.destroy()
+    scene.cameraShake(5, 5000)
+    info.changeScoreBy(-1)
+    cone = sprites.create(assets.image`myImage4`, SpriteKind.Obstacle)
+    cone.setPosition(randint(0, 120), randint(0, 100))
+    pause(5000)
+    cone.setPosition(randint(0, 120), randint(0, 100))
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Money, function (sprite, otherSprite) {
     shard.destroy(effects.disintegrate, 500)
     Shards += 1
@@ -28,24 +43,6 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Money, function (sprite, otherSp
     if (Shards < blockSettings.readNumber("Shardstore")) {
         blockSettings.writeNumber("Shardstore", Shards)
     }
-})
-sprites.onOverlap(SpriteKind.Cursor, SpriteKind.Buttonshop, function (sprite, otherSprite) {
-    Playbutton.destroy()
-    shopbtn.destroy()
-    Settings.destroy()
-    shop()
-})
-sprites.onCreated(SpriteKind.Money, function (sprite) {
-    shardishere = 1
-})
-sprites.onOverlap(SpriteKind.Cursor, SpriteKind.Mudbtn, function (sprite, otherSprite) {
-    mudtime()
-})
-controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    badguy()
-})
-info.onLifeZero(function () {
-    game.over(false)
 })
 function settings2 () {
     scene.setTileMap(img`
@@ -116,13 +113,6 @@ function settings2 () {
     backsetbtn.setPosition(24, 104)
     myDart = 0
 }
-sprites.onOverlap(SpriteKind.Cursor, SpriteKind.gogglebuy, function (sprite, otherSprite) {
-    Goggle.destroy()
-    Goggleyes.destroy()
-    Goggleyes = sprites.create(assets.image`myImage1`, SpriteKind.Player)
-    hasgoggles = 1
-    Goggleyes.setPosition(25, 26)
-})
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 	
 })
@@ -133,56 +123,25 @@ sprites.onOverlap(SpriteKind.Cursor, SpriteKind.Button, function (sprite, otherS
     Settings.destroy()
     game_define()
 })
+info.onCountdownEnd(function () {
+    info.changeLifeBy(-1)
+    info.startCountdown(5)
+})
+sprites.onOverlap(SpriteKind.Cursor, SpriteKind.gogglebuy, function (sprite, otherSprite) {
+    Goggle.destroy()
+    Goggleyes.destroy()
+    Goggleyes = sprites.create(assets.image`myImage1`, SpriteKind.Player)
+    hasgoggles = 1
+    Goggleyes.setPosition(25, 26)
+})
 sprites.onOverlap(SpriteKind.Cursor, SpriteKind.backsettingbtn, function (sprite, otherSprite) {
     Cursor2.destroy()
     Mud.destroy()
     backsetbtn.destroy()
     Menu()
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Buttonshop, function (sprite, otherSprite) {
-    info.stopCountdown()
-    info.setScore(0)
-    mySprite.destroy()
-    if (shardishere == 1) {
-        shard.destroy()
-    }
-    mason.destroy()
-    shopbtn.destroy()
-    cone.destroy()
-    Cursor2 = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . f f f . . . . . 
-        . . . . . . . f 9 9 f . . . . . 
-        . . . . . . c 9 f 9 f . . . . . 
-        . . . . . . c f 9 f . . . . . . 
-        . . . . . c f c c . . . . . . . 
-        . . . . . c c . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.Cursor)
-    controller.moveSprite(Cursor2)
-    effects.blizzard.endScreenEffect()
-    shop()
-})
-sprites.onOverlap(SpriteKind.Cursor, SpriteKind.Goggleremove, function (sprite, otherSprite) {
-    Goggle.destroy()
-    Goggleyes.destroy()
-    Goggle = sprites.create(assets.image`myImage11`, SpriteKind.Player)
-    hasgoggles = 0
-    Goggle.setPosition(25, 26)
-})
 sprites.onDestroyed(SpriteKind.Money, function (sprite) {
     shardishere = 0
-})
-sprites.onDestroyed(SpriteKind.Projectile, function (sprite) {
-    balls += -1
 })
 sprites.onOverlap(SpriteKind.nothun, SpriteKind.Enemy, function (sprite, otherSprite) {
     rathealth += -1
@@ -279,29 +238,11 @@ function badguy () {
         enemyishere = 1
     }
 }
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Obstacle, function (sprite, otherSprite) {
-    if (randint(0, 10) == 2) {
-        badguy()
-    }
-    cone.destroy()
-    scene.cameraShake(5, 5000)
-    info.changeScoreBy(-1)
-    cone = sprites.create(assets.image`myImage4`, SpriteKind.Obstacle)
-    cone.setPosition(randint(0, 120), randint(0, 100))
-    pause(5000)
-    cone.setPosition(randint(0, 120), randint(0, 100))
-})
 function mudtime () {
     color.setPalette(
     color.Adventure
     )
 }
-sprites.onOverlap(SpriteKind.Cursor, SpriteKind.settingbtn, function (sprite, otherSprite) {
-    settings2()
-    Playbutton.destroy()
-    shopbtn.destroy()
-    Settings.destroy()
-})
 // To do:
 // 
 // Fix monehs
@@ -640,10 +581,6 @@ function shop () {
     purhasebutton.setPosition(36, 47)
     myDart = 0
 }
-info.onCountdownEnd(function () {
-    info.changeLifeBy(-1)
-    info.startCountdown(5)
-})
 sprites.onOverlap(SpriteKind.ballsofenemy, SpriteKind.Player, function (sprite, otherSprite) {
     info.changeLifeBy(-1)
     scene.cameraShake(4, 500)
@@ -667,6 +604,38 @@ sprites.onOverlap(SpriteKind.ballsofenemy, SpriteKind.Player, function (sprite, 
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.ballsofenemy)
     enemyballs.follow(mason, 30)
+})
+info.onLifeZero(function () {
+    game.over(false)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
+    if (shardishere == 0) {
+        if (randint(0, 6) == 1) {
+            shard = sprites.create(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . 3 . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . 3 . . 9 . 3 . . . . . 
+                . . . . . . . 6 9 . . . . . . . 
+                . . . 3 . . 6 9 9 . . . . . . . 
+                . . . . . 8 9 9 6 . . . . . . . 
+                . . . . . . 6 9 9 . . . . . . . 
+                . . . 3 . . . 8 . . 3 . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . 3 . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `, SpriteKind.Money)
+            shard.setPosition(randint(0, 120), randint(0, 100))
+        }
+    }
+    icebreak()
+    if (randint(0, 10) == 2) {
+        badguy()
+    }
 })
 // Menu items
 function Menu () {
@@ -855,6 +824,9 @@ function Menu () {
     Settings.setPosition(72, 34)
     myDart = 0
 }
+sprites.onDestroyed(SpriteKind.Enemy, function (sprite) {
+    enemyishere = 0
+})
 sprites.onOverlap(SpriteKind.Cursor, SpriteKind.backbtn, function (sprite, otherSprite) {
     Cursor2.destroy()
     Backbtn.destroy()
@@ -863,9 +835,6 @@ sprites.onOverlap(SpriteKind.Cursor, SpriteKind.backbtn, function (sprite, other
     purhasebutton.destroy()
     gogglenoget.destroy()
     Menu()
-})
-sprites.onDestroyed(SpriteKind.Enemy, function (sprite) {
-    enemyishere = 0
 })
 function start () {
     scene.setBackgroundImage(img`
@@ -991,6 +960,44 @@ function start () {
         dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
         `)
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Buttonshop, function (sprite, otherSprite) {
+    info.stopCountdown()
+    info.setScore(0)
+    mySprite.destroy()
+    if (shardishere == 1) {
+        shard.destroy()
+    }
+    mason.destroy()
+    shopbtn.destroy()
+    cone.destroy()
+    Cursor2 = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . f f f . . . . . 
+        . . . . . . . f 9 9 f . . . . . 
+        . . . . . . c 9 f 9 f . . . . . 
+        . . . . . . c f 9 f . . . . . . 
+        . . . . . c f c c . . . . . . . 
+        . . . . . c c . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.Cursor)
+    controller.moveSprite(Cursor2)
+    effects.blizzard.endScreenEffect()
+    shop()
+})
+sprites.onDestroyed(SpriteKind.Projectile, function (sprite) {
+    balls += -1
+})
+sprites.onCreated(SpriteKind.Money, function (sprite) {
+    shardishere = 1
+})
 // Menu items
 function icebreak () {
     info.stopCountdown()
@@ -1113,34 +1120,27 @@ function icebreak () {
     )
     info.startCountdown(5)
 }
-sprites.onOverlap(SpriteKind.Player, SpriteKind.Food, function (sprite, otherSprite) {
-    if (shardishere == 0) {
-        if (randint(0, 6) == 1) {
-            shard = sprites.create(img`
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . 3 . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . 3 . . 9 . 3 . . . . . 
-                . . . . . . . 6 9 . . . . . . . 
-                . . . 3 . . 6 9 9 . . . . . . . 
-                . . . . . 8 9 9 6 . . . . . . . 
-                . . . . . . 6 9 9 . . . . . . . 
-                . . . 3 . . . 8 . . 3 . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . 3 . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                . . . . . . . . . . . . . . . . 
-                `, SpriteKind.Money)
-            shard.setPosition(randint(0, 120), randint(0, 100))
-        }
-    }
-    icebreak()
-    if (randint(0, 10) == 2) {
-        badguy()
-    }
+sprites.onOverlap(SpriteKind.Cursor, SpriteKind.Goggleremove, function (sprite, otherSprite) {
+    Goggle.destroy()
+    Goggleyes.destroy()
+    Goggle = sprites.create(assets.image`myImage11`, SpriteKind.Player)
+    hasgoggles = 0
+    Goggle.setPosition(25, 26)
+})
+sprites.onOverlap(SpriteKind.Cursor, SpriteKind.Buttonshop, function (sprite, otherSprite) {
+    Playbutton.destroy()
+    shopbtn.destroy()
+    Settings.destroy()
+    shop()
+})
+sprites.onOverlap(SpriteKind.Cursor, SpriteKind.settingbtn, function (sprite, otherSprite) {
+    settings2()
+    Playbutton.destroy()
+    shopbtn.destroy()
+    Settings.destroy()
+})
+sprites.onOverlap(SpriteKind.Cursor, SpriteKind.Mudbtn, function (sprite, otherSprite) {
+    mudtime()
 })
 function music2 () {
     for (let index = 0; index < 696969; index++) {
@@ -1148,31 +1148,31 @@ function music2 () {
     }
 }
 let Sword: Sprite = null
+let balls = 0
 let gogglenoget: Sprite = null
 let purhasebutton: Sprite = null
 let Backbtn: Sprite = null
 let isfirst = 0
+let mySprite: Sprite = null
+let mason: Sprite = null
 let enemyballs: Sprite = null
 let myEnemy: Sprite = null
 let enemyishere = 0
 let rathealth = 0
-let balls = 0
-let cone: Sprite = null
-let mason: Sprite = null
-let mySprite: Sprite = null
-let Cursor2: Sprite = null
+let shardishere = 0
 let hasgoggles = 0
 let Goggleyes: Sprite = null
 let Goggle: Sprite = null
-let myDart = 0
-let backsetbtn: Sprite = null
-let Mud: Sprite = null
-let shardishere = 0
 let Settings: Sprite = null
 let shopbtn: Sprite = null
 let Playbutton: Sprite = null
+let Cursor2: Sprite = null
+let myDart = 0
+let backsetbtn: Sprite = null
+let Mud: Sprite = null
 let Shards = 0
 let shard: Sprite = null
+let cone: Sprite = null
 start()
 pause(1000)
 Menu()
